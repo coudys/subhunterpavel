@@ -2,6 +2,7 @@
 package com.gamecodeschool.subhunter;
 
 import android.app.Activity;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.os.Bundle;
 import android.view.Window;
@@ -14,7 +15,9 @@ import android.view.Display;
 import android.util.Log;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 //import java.util.Arraylist;
 
@@ -55,6 +58,12 @@ public class UbootJaeger extends Activity {
     // = new int[10000]
     int pastShotsDistance[] = new int[2000];
     //int[][][] pastShotsArray = new int[1][1][1];
+
+    ArrayList<Integer> pastShotsArrayList = new ArrayList<>();
+
+    List<Integer[]> pastShotsList = new ArrayList<>();
+
+    List<List<Integer>> pastShotsListOfLists = new ArrayList<>();
     int debuggingCountClick = 0; //helps to activate debugging screen during gameplay
 
     float touchX;
@@ -408,13 +417,7 @@ public class UbootJaeger extends Activity {
         if (distanceFromSub != 0) {
             pastShotsDistance[shotsTaken] = distanceFromSub;
         }
-        int[] pastShotsArray = new int[shotsTaken];
-        // copying array org to copy
-        int[] pastShotsArrayCopy = Arrays.copyOf(pastShotsArray, shotsTaken);
-        int xCoords = horizontalTouched;
-        int yCoords = horizontalTouched;
-        int distance = horizontalTouched;
-        pastShotsArrayCopy[shotsTaken] = {xCoords,yCoords,distance};
+
         // Did the shot hit the sub?
         hit = horizontalTouched == subHorizontalPosition
                 && verticalTouched == subVerticalPosition;
@@ -437,6 +440,46 @@ public class UbootJaeger extends Activity {
         paintBlack.setColor(Color.argb(255, 0, 0, 0));
         paintBlue.setColor(Color.argb(255, 0, 0, 255));
 
+// log output of current shot and pastShotsArrayList
+        if (shotsTaken >0) {
+            pastShotsArrayList.add(horizontalTouched);
+            pastShotsArrayList.add(verticalTouched);
+            pastShotsArrayList.add(distanceFromSub);
+//PastShotsArray to string
+            String joined = TextUtils.join("-", pastShotsArrayList);
+            String rawData = " X:" + horizontalTouched + " Y:" + verticalTouched + " D:" + distanceFromSub;
+            Log.d("Debugging", "In onCreate");
+            Log.d("current shot", "Values: " + rawData);  // arraylist values
+            Log.d("pastShotsArrayList", "Values: " + joined);  // arraylist values
+
+        pastShotsList.add(new Integer[] {horizontalTouched, verticalTouched, distanceFromSub});
+        for (final Integer[] coordinates : pastShotsList) {
+            System.out.println(Arrays.toString(coordinates));
+        //    final int x = coordinates[0];
+        //    final int y = coordinates[1];
+        //    final int d = coordinates[2];
+        }
+        String joinedList = TextUtils.join(",", pastShotsList.get(shotsTaken-1));
+        Log.d("pastShotsArrayListBaum", "Values: " + joinedList);  // arraylist values
+        //final int x3 = pastShotsList.get(3)[0];
+        //final int y5 = pastShotsList.get(5)[1];
+        //final int d7 = pastShotsList.get(7)[2];
+
+
+
+            pastShotsListOfLists.add(Arrays.asList(horizontalTouched, verticalTouched, distanceFromSub));
+            for (final List<Integer> coordinates : pastShotsListOfLists) {
+                System.out.println(coordinates);
+             //   final int x = coordinates.get(0);
+             //   final int y = coordinates.get(1);
+             //   final int d = coordinates.get(2);
+            }
+            String joinedListOfLists = TextUtils.join(".", pastShotsListOfLists);
+            Log.d("pastShotsListOfLists", "Values: " + joinedListOfLists);  // arraylist values
+            //final int x3 = pastShotsListOfLists.get(3).get(0);
+            //final int y5 = pastShotsListOfLists.get(5).get(1);
+            //final int d7 = pastShotsListOfLists.get(7).get(2);
+        }
 // If there is a hit call boom
         if(hit) {
             boom();
@@ -602,6 +645,7 @@ public class UbootJaeger extends Activity {
         canvas.drawText("sameY = " +
                         sameY, 50,
                 blockSize * 15, paintRed);
+
         arrayPastShotsOutput = "";
         for (int i = 0; i < shotsTaken; i++) {
             arrayPastShotsOutput += ("[" + pastShotsX[i] + " " + pastShotsY[i] + " " + pastShotsDistance[i] + "]");
