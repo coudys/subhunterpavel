@@ -32,10 +32,10 @@ public class UbootJaeger extends Activity {
 
     // original value, works ok
     //float horizontalTouched = -100;
-    float horizontalTouched = -100;
+    int horizontalTouched = -100;
 
     //-100 initial position of touched horizontal (shows ShotsTaken 0);
-    float verticalTouched = -100;
+    int verticalTouched = -100;
     int subHorizontalPosition;
     int subVerticalPosition;
     boolean hit = false;
@@ -54,6 +54,7 @@ public class UbootJaeger extends Activity {
     int pastShotsY[] = new int[2000];
     // = new int[10000]
     int pastShotsDistance[] = new int[2000];
+    //int[][][] pastShotsArray = new int[1][1][1];
     int debuggingCountClick = 0; //helps to activate debugging screen during gameplay
 
     float touchX;
@@ -380,6 +381,7 @@ public class UbootJaeger extends Activity {
 // into int grid coordinates
         horizontalTouched = (int)touchX/ blockSize;
         verticalTouched = (int)touchY/ blockSize;
+// check whether block on 1:1 coordinates was clicked, if yes, debuggingCountClick ++
         if (horizontalTouched != 0 && verticalTouched != 0) {
             debuggingCountClick = 0;
         }
@@ -400,12 +402,19 @@ public class UbootJaeger extends Activity {
             showSub = false;
         }
 // position of the current shot will be saved into pastShotsX and pastShotsY 1D arrays
-        pastShotsX[shotsTaken] = (int) horizontalTouched;
-        pastShotsY[shotsTaken] = (int) verticalTouched;
+        pastShotsX[shotsTaken] = horizontalTouched;
+        pastShotsY[shotsTaken] = verticalTouched;
 // if the distance to sub is other than zero, distance from sub is saved to pastShotsdistance 1D array
         if (distanceFromSub != 0) {
             pastShotsDistance[shotsTaken] = distanceFromSub;
         }
+        int[] pastShotsArray = new int[shotsTaken];
+        // copying array org to copy
+        int[] pastShotsArrayCopy = Arrays.copyOf(pastShotsArray, shotsTaken);
+        int xCoords = horizontalTouched;
+        int yCoords = horizontalTouched;
+        int distance = horizontalTouched;
+        pastShotsArrayCopy[shotsTaken] = {xCoords,yCoords,distance};
         // Did the shot hit the sub?
         hit = horizontalTouched == subHorizontalPosition
                 && verticalTouched == subVerticalPosition;
