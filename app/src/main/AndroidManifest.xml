@@ -13,7 +13,7 @@
         android:theme="@style/Theme.SubHunterPavel"
         tools:targetApi="31">
         <activity
-            android:name=".SubHunter"
+            android:name=".UbootJaeger"
             android:theme=
                 "@android:style/Theme.Holo.Light.NoActionBar.Fullscreen"
             android:exported="true"
