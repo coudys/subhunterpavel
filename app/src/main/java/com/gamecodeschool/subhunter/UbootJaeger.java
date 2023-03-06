@@ -53,10 +53,10 @@ public class UbootJaeger extends Activity {
     boolean showSub = false;
 //  this 3D array to replace three 1D arrays
     //int[][][] pastShots = new int[10000][10000][10000];
-    int pastShotsX[] = new int[2000];
-    int pastShotsY[] = new int[2000];
+    int[] pastShotsX = new int[2000];
+    int[] pastShotsY = new int[2000];
     // = new int[10000]
-    int pastShotsDistance[] = new int[2000];
+    int[] pastShotsDistance = new int[2000];
     //int[][][] pastShotsArray = new int[1][1][1];
 
     ArrayList<Integer> pastShotsArrayList = new ArrayList<>();
