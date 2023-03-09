@@ -69,7 +69,11 @@ public class UbootJaeger extends Activity {
     float touchX;
     float touchY;
 
+    int numberOfGamesPlayed = 0;
 
+    int totalNumberOfShotsForAllGames = 0;
+
+    float averageNumberOfShotsForAllGames;
     // Here are all the objects(instances)
 // of classes that we need to do some drawing
     ImageView gameView;
@@ -226,15 +230,7 @@ public class UbootJaeger extends Activity {
         paintBlack.setTextSize(blockSize * 0.9F);
         paintPastShots.setTextSize(blockSize * 0.9f);
         paintPastShots.setTextAlign(Paint.Align.CENTER);
-
-// Copyright text
-        paintBlackTrans.setTextAlign(Paint.Align.RIGHT);
-        paintBlackTrans.setTextSize(blockSize * 0.7f);
-        canvas.drawText(
-                "PavelD (2023)",
-                (1 * numberHorizontalPixels) - (numberHorizontalPixels - (gridWidth * blockSize - 0.1F * blockSize)) ,
-                blockSize * 0.9f,
-                paintBlackTrans);
+        paintBlack.setTextAlign(Paint.Align.LEFT);
         paintBlack.setTextAlign(Paint.Align.LEFT);
         paintBlack.setTextSize(blockSize * 1);
         //Log.d("Debugging", "In draw");
@@ -245,13 +241,15 @@ public class UbootJaeger extends Activity {
             gameView.setImageBitmap(blankBitmap);
 //new game screen background
             canvas.drawRect(
-                    1 * blockSize + 0.3F * blockSize,
-                    1 * blockSize + 0.3F * blockSize,
+                    blockSize + 0.3F * blockSize,
+                    blockSize + 0.3F * blockSize,
                     numberHorizontalPixels - 0.7F * blockSize,
                     numberVerticalPixels - 0.7F * blockSize,
                     paintBlackTrans);
 //new game screen background shadow
-            canvas.drawRect( blockSize, blockSize,
+            canvas.drawRect(
+                    1 * blockSize,
+                    1 * blockSize,
                     numberHorizontalPixels - blockSize,
                     numberVerticalPixels - blockSize,
                     paintGreyTrans);
@@ -261,6 +259,24 @@ public class UbootJaeger extends Activity {
 
             canvas.drawText("Submarine Hunter", (numberHorizontalPixels / 2),
                     (blockSize / 2) +blockSize - paintWhite.ascent(), paintWhite);
+// Draw text "PavelD(2023)" at the start top left of grey screen
+            paintWhite.setTextAlign(Paint.Align.LEFT);
+            paintWhite.setTextSize(blockSize * 0.7f);
+            canvas.drawText(
+                    "PavelD(2023)",
+                    1.4F * blockSize ,
+                    blockSize * 2f,
+                    paintWhite);
+            paintWhite.setTextAlign(Paint.Align.CENTER);
+// Draw text "thanks to gamecodeschool" at the start top right of grey screen
+            paintWhite.setTextAlign(Paint.Align.RIGHT);
+            paintWhite.setTextSize(blockSize * 0.7f);
+            canvas.drawText(
+                    "thanks to gamecodeschool",
+                    (1 * numberHorizontalPixels) - (numberHorizontalPixels - (gridWidth * blockSize - 1.1F * blockSize)) ,
+                    blockSize * 2f,
+                    paintWhite);
+            paintWhite.setTextAlign(Paint.Align.CENTER);
 // Draw the description of the game
             paintWhite.setTextSize(blockSize * 1.5F);
             canvas.drawText("a very simple yet interesting game",
@@ -336,7 +352,8 @@ public class UbootJaeger extends Activity {
                 (blockSize * horizontalTouched) + (blockSize / 2),
                 blockSize * (verticalTouched) + (blockSize / 2) - ((paintPastShots.descent() + paintPastShots.ascent())/ 2),
                 paintBlack);
-// Draw a circle showing are where submarine is
+
+        // Draw a circle showing are where submarine is
         /*canvas.drawArc(blockSize/2 + blockSize * (horizontalTouched - distanceFromSub),
                 blockSize/2 + blockSize * (verticalTouched + distanceFromSub),
                 blockSize/2 + blockSize * (horizontalTouched + (distanceFromSub)),
@@ -491,7 +508,9 @@ public class UbootJaeger extends Activity {
     }
     // This code says "EXPLOSION!"
     void boom(){
-
+    numberOfGamesPlayed++;
+    totalNumberOfShotsForAllGames = totalNumberOfShotsForAllGames + shotsTaken;
+    averageNumberOfShotsForAllGames = totalNumberOfShotsForAllGames / numberOfGamesPlayed;
 // Wipe the screen with a red color, transparent with shadow
         canvas.drawColor(Color.argb(0, 255, 0, 0));
         gameView.setImageBitmap(blankBitmap);
@@ -545,6 +564,12 @@ public class UbootJaeger extends Activity {
         canvas.drawText("Shots: " + shotsTaken,
                 (numberHorizontalPixels / 2),
                 (numberVerticalPixels / 2) +blockSize - ((paintWhite.descent() + paintWhite.ascent()) / 2), paintWhite);
+
+        paintWhite.setTextSize(blockSize * 1.5F);
+        canvas.drawText("Average Number of Shots per all games: " + averageNumberOfShotsForAllGames,
+                (numberHorizontalPixels / 2),
+                (numberVerticalPixels / 2) + (3 * blockSize) - ((paintWhite.descent() + paintWhite.ascent()) / 2),
+                paintWhite);
         paintWhite.setTextSize(blockSize * 2);
 
 // Draw some text to prompt restarting on the boom screen
@@ -557,46 +582,18 @@ public class UbootJaeger extends Activity {
         newGame();
     }
 
-// this code calculate the grid for given screen, greatest common divisor
-    public int gcd(int a, int b)
-    {
-        if (a == 0)
-            return b;
-
-        return gcd(b % a, a);
-    }
-    // method to calculate all common divisors
-    // of two given numbers
-    // a, b --> input integer numbers
-    public int commDiv(int a, int b)
-    {
-        // find gcd of a, b
-        int n = gcd(a, b);
-
-        // Count divisors of n.
-        int result = 0;
-        for (int i = 1; i <= Math.sqrt(n); i++) {
-            // if 'i' is factor of n
-            if (n % i == 0) {
-                // check if divisors are equal
-                if (n / i == i)
-                    result += 1;
-                else
-                    result += 2;
-            }
-        }
-        return result;
-    }
     // this code shows the location of the Submarine, shows count clicks
     void showSub(){
+        paintBlack.setColor(Color.argb(175, 0, 0, 0));
+        paintRed.setColor(Color.argb(175, 255, 0, 0));
         paintBlack.setTextSize(0.7F * blockSize);
         paintRed.setTextSize(blockSize);
         paintBlack.setTextAlign(Paint.Align.CENTER);
         canvas.drawText("Top Left Block Click Count: " + debuggingCountClick,
-                gridWidth * blockSize / 2, 1 * blockSize, paintBlack);
+                gridWidth * blockSize / 2, 1.5F * blockSize, paintBlack);
         paintBlack.setTextSize(0.6F * blockSize);
         canvas.drawText("24x click to hide all hacks",
-                gridWidth * blockSize / 2, 1.5F * blockSize, paintBlack);
+                gridWidth * blockSize / 2, 2 * blockSize, paintBlack);
         paintBlack.setTextAlign(Paint.Align.LEFT);
         paintBlack.setTextSize(blockSize);
         canvas.drawRect(subHorizontalPosition * blockSize,
@@ -604,9 +601,14 @@ public class UbootJaeger extends Activity {
                 (subHorizontalPosition * blockSize) + blockSize,
                 (subVerticalPosition * blockSize)+ blockSize,
                 paintBlack);
+        paintBlack.setColor(Color.argb(255, 0, 0, 0));
+        paintRed.setColor(Color.argb(255, 255, 0, 0));
     }
     // This code prints the debugging text
     void printDebuggingText() {
+        paintBlack.setColor(Color.argb(175, 0, 0, 0));
+        paintRed.setColor(Color.argb(175, 255, 0, 0));
+        paintBlack.setTextAlign(Paint.Align.LEFT);
         paintBlack.setTextSize(blockSize);
         paintRed.setTextSize(blockSize);
         canvas.drawText("numberHorizontalPixels = "
@@ -639,27 +641,26 @@ public class UbootJaeger extends Activity {
         canvas.drawText("touchY = " +
                         touchY, 50,
                 blockSize * 13, paintRed);
-        canvas.drawText("sameX = " +
+/*        canvas.drawText("sameX = " +
                         sameX, 50,
                 blockSize * 14, paintRed);
         canvas.drawText("sameY = " +
                         sameY, 50,
                 blockSize * 15, paintRed);
-
-        arrayPastShotsOutput = "";
-        for (int i = 0; i < shotsTaken; i++) {
-            arrayPastShotsOutput += ("[" + pastShotsX[i] + " " + pastShotsY[i] + " " + pastShotsDistance[i] + "]");
-            canvas.drawText("pastShotsArray[X Y D] = " + arrayPastShotsOutput,
-                    50, blockSize * 16, paintRedHalfSize);
-        }
+*/
+//        arrayPastShotsOutput = "";
+//        for (int i = 0; i < shotsTaken; i++) {
+//            arrayPastShotsOutput += ("[" + pastShotsX[i] + " " + pastShotsY[i] + " " + pastShotsDistance[i] + "]");
+//            canvas.drawText("pastShotsArray[X Y D] = " + arrayPastShotsOutput,
+//                    50, blockSize * 16, paintRedHalfSize);
+//        }
 
 //                50, blockSize * 13, paint);
-        //prints common divisor of two numbers A and B
-        canvas.drawText("Common Divisor: " + commDiv(a, b),
+        canvas.drawText("Total amount of Shots : " + totalNumberOfShotsForAllGames,
                 blockSize * 18, blockSize * 3, paintBlack);
-        canvas.drawText("2220 / Divisor: " + 2220 / commDiv(a, b),
+        canvas.drawText("number of games played: " + numberOfGamesPlayed,
                 blockSize * 18, blockSize * 4, paintBlack);
-        canvas.drawText("1014 / Divisor: " + 1014 / commDiv(a, b),
+        canvas.drawText("Average: " + averageNumberOfShotsForAllGames,
                 blockSize * 18, blockSize * 5, paintBlack);
         canvas.drawText("DebuggingCountClick: " + debuggingCountClick,
                 blockSize * 18, blockSize * 6, paintBlack);
@@ -670,7 +671,7 @@ public class UbootJaeger extends Activity {
                 (subVerticalPosition * blockSize) + blockSize,
                 paintBlack);
 //debugging testing for duplicate location shots
-        paintBlack.setTextSize(0.6F * blockSize);
+/*        paintBlack.setTextSize(0.6F * blockSize);
         canvas.drawText("pastShotsX: X " + "touchedX: " + horizontalTouched + " sameX: " + sameX, numberHorizontalPixels / 2 + 8 * blockSize,
                 (blockSize / 2) * (9), paintBlack);
         if (shotsTaken == 0 | shotsTaken == 1) {
@@ -690,6 +691,8 @@ public class UbootJaeger extends Activity {
             }
             paintBlack.setTextSize(blockSize);
 
-        }
+        }*/
+        paintBlack.setColor(Color.argb(255, 0, 0, 0));
+        paintRed.setColor(Color.argb(255, 255, 0, 0));
     }
 }
