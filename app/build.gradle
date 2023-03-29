@@ -18,8 +18,8 @@ android {
         applicationId 'com.gamecodeschool.subhunter'
         minSdk 21
         targetSdk 33
-        versionCode 5
-        versionName '1.5'
+        versionCode 7
+        versionName '1.7'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.pdesort

@@ -261,11 +261,11 @@ public class UbootJaeger extends Activity {
 
             canvas.drawText("Submarine Hunter", (numberHorizontalPixels / 2),
                     (blockSize / 2) +blockSize - paintWhite.ascent(), paintWhite);
-// Draw text "PavelD(2023)" at the start top left of grey screen
+// Draw text "PavelD(2023) v1.61" at the start top left of grey screen
             paintWhite.setTextAlign(Paint.Align.LEFT);
             paintWhite.setTextSize(blockSize * 0.7f);
             canvas.drawText(
-                    "PavelD(2023)",
+                    "PavelD(2023) v1.71",
                     1.4F * blockSize ,
                     blockSize * 2f,
                     paintWhite);
