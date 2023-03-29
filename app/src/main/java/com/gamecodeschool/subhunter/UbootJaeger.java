@@ -2,6 +2,8 @@
 package com.gamecodeschool.subhunter;
 
 import android.app.Activity;
+import android.icu.text.DecimalFormat;
+import android.os.Build;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.os.Bundle;
@@ -69,9 +71,9 @@ public class UbootJaeger extends Activity {
     float touchX;
     float touchY;
 
-    int numberOfGamesPlayed = 0;
+    float numberOfGamesPlayed = 0;
 
-    int totalNumberOfShotsForAllGames = 0;
+    float totalNumberOfShotsForAllGames = 0;
 
     float averageNumberOfShotsForAllGames;
     // Here are all the objects(instances)
@@ -511,6 +513,16 @@ public class UbootJaeger extends Activity {
     numberOfGamesPlayed++;
     totalNumberOfShotsForAllGames = totalNumberOfShotsForAllGames + shotsTaken;
     averageNumberOfShotsForAllGames = totalNumberOfShotsForAllGames / numberOfGamesPlayed;
+        DecimalFormat df = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            df = new DecimalFormat();
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            df.setMaximumFractionDigits(2);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            // System.out.println(df.format(averageNumberOfShotsForAllGames));
+        }
 // Wipe the screen with a red color, transparent with shadow
         canvas.drawColor(Color.argb(0, 255, 0, 0));
         gameView.setImageBitmap(blankBitmap);
@@ -566,10 +578,14 @@ public class UbootJaeger extends Activity {
                 (numberVerticalPixels / 2) +blockSize - ((paintWhite.descent() + paintWhite.ascent()) / 2), paintWhite);
 
         paintWhite.setTextSize(blockSize * 1.5F);
-        canvas.drawText("Average Number of Shots per all games: " + averageNumberOfShotsForAllGames,
-                (numberHorizontalPixels / 2),
-                (numberVerticalPixels / 2) + (3 * blockSize) - ((paintWhite.descent() + paintWhite.ascent()) / 2),
-                paintWhite);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            // System.out.println(df.format(averageNumberOfShotsForAllGames));
+            canvas.drawText("Average Number of Shots per all games: " + df.format(averageNumberOfShotsForAllGames),
+                    (numberHorizontalPixels / 2),
+                    (numberVerticalPixels / 2) + (3 * blockSize) - ((paintWhite.descent() + paintWhite.ascent()) / 2),
+                    paintWhite);
+        }
+
         paintWhite.setTextSize(blockSize * 2);
 
 // Draw some text to prompt restarting on the boom screen
